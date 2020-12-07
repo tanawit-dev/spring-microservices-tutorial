@@ -35,7 +35,7 @@ public class EmployeeController {
 	}
 	
 	@GetMapping("organization/{organization}")
-	public List<Employee> findEmployeeByOrganization(@PathVariable String organizationId) {
+	public List<Employee> findEmployeeByOrganizationId(@PathVariable String organizationId) {
 		return employeeService.findEmployeeByOrganizationId(organizationId);
 	}
 	
