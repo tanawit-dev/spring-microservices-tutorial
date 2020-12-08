@@ -1,9 +1,15 @@
 package com.tanawit.springcloud.organization;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.tanawit.springcloud.department.Department;
+import com.tanawit.springcloud.department.DepartmentClient;
+import com.tanawit.springcloud.employee.Employee;
+import com.tanawit.springcloud.employee.EmployeeClient;
 
 @Service
 public class OrganizationService {
@@ -11,12 +17,28 @@ public class OrganizationService {
 	@Autowired
 	private OrganizationRepository organizationRepository;
 	
+	@Autowired
+	private EmployeeClient employeeClient;
+	
+	@Autowired
+	private DepartmentClient departmentClient;
+	
 	public List<Organization> findAllOrganization() {
 		return organizationRepository.findAll();
 	}
 	
 	public Organization findOraganizationById(String id) {
-		return organizationRepository.findById(id).orElse(null);
+		Optional<Organization> organization = organizationRepository.findById(id);
+		
+		organization.ifPresent(o -> {
+			List<Employee> employees = employeeClient.findEmployeeByOrganizationId(o.getId());
+			List<Department> departments = departmentClient.findDepartmentByOrganizationId(o.getId());
+			
+			o.setEmployees(employees);
+			o.setDepartments(departments);
+		});
+		
+		return organization.orElse(null);
 	}
 	
 	public Organization createOrganization(Organization organization) {

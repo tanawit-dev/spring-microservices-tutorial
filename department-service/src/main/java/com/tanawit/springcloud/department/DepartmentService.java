@@ -1,15 +1,22 @@
 package com.tanawit.springcloud.department;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.tanawit.springcloud.employee.Employee;
+import com.tanawit.springcloud.employee.EmployeeClient;
 
 @Service
 public class DepartmentService {
 	
 	@Autowired
 	DepartmentRepository departmentRepository;
+	
+	@Autowired
+	EmployeeClient employeeClient;
 	
 	public List<Department> findAllDepartment() {
 		return departmentRepository.findAll();
@@ -20,7 +27,14 @@ public class DepartmentService {
 	}
 	
 	public Department findDepartmentById(String id) {
-		return departmentRepository.findById(id).orElse(null);
+		Optional<Department> department = departmentRepository.findById(id);
+		
+		department.ifPresent(d -> {
+			List<Employee> employees = employeeClient.findEmployeeByDepartmentId(d.getId());
+			d.setEmployees(employees);
+		});
+		
+		return department.orElse(null);
 	}
 	
 	public Department createDepartment(Department department) {
