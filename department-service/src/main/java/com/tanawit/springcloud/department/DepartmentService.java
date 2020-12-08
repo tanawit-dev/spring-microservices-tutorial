@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.tanawit.springcloud.employee.Employee;
 import com.tanawit.springcloud.employee.EmployeeClient;
 
@@ -26,6 +27,7 @@ public class DepartmentService {
 		return departmentRepository.findByOrganizationId(organizationId);
 	}
 	
+	@HystrixCommand(fallbackMethod = "findDepartmentByIdRecovery")
 	public Department findDepartmentById(String id) {
 		Optional<Department> department = departmentRepository.findById(id);
 		
@@ -35,6 +37,10 @@ public class DepartmentService {
 		});
 		
 		return department.orElse(null);
+	}
+	
+	protected Department findDepartmentByIdRecovery(String id) {
+		return departmentRepository.findById(id).orElse(null);
 	}
 	
 	public Department createDepartment(Department department) {

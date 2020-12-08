@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.tanawit.springcloud.department.Department;
 import com.tanawit.springcloud.department.DepartmentClient;
 import com.tanawit.springcloud.employee.Employee;
@@ -27,6 +28,7 @@ public class OrganizationService {
 		return organizationRepository.findAll();
 	}
 	
+	@HystrixCommand(fallbackMethod = "findOraganizationByIdRecovery")
 	public Organization findOraganizationById(String id) {
 		Optional<Organization> organization = organizationRepository.findById(id);
 		
@@ -39,6 +41,10 @@ public class OrganizationService {
 		});
 		
 		return organization.orElse(null);
+	}
+	
+	public Organization findOraganizationByIdRecovery(String id) {
+		return organizationRepository.findById(id).orElse(null);
 	}
 	
 	public Organization createOrganization(Organization organization) {
