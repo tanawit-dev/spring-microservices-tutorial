@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.netflix.ribbon.RibbonClient;
+import org.springframework.cloud.netflix.ribbon.RibbonClients;
 import org.springframework.stereotype.Service;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
@@ -11,6 +13,7 @@ import com.tanawit.springcloud.employee.Employee;
 import com.tanawit.springcloud.employee.EmployeeClient;
 
 @Service
+@RibbonClient("employee-service")
 public class DepartmentService {
 	
 	@Autowired
