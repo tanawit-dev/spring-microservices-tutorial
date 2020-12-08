@@ -1,4 +1,4 @@
-package com.tanawit.configuration;
+package com.tanawit.config;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,10 +8,10 @@ import org.springframework.cloud.config.server.EnableConfigServer;
 @EnableConfigServer
 @EnableDiscoveryClient
 @SpringBootApplication
-public class ConfigurationServiceApplication {
+public class ConfigServerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ConfigurationServiceApplication.class, args);
+		SpringApplication.run(ConfigServerApplication.class, args);
 	}
 
 }
