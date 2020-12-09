@@ -1,0 +1,7 @@
+spring:  application:    name: config-server
+  profiles:    active:    - native
+  cloud:    config:      server:        native:          search-locations:          - file:///${user.name}/application-config
+          
+eureka:  client:    region: default
+    service-url:
+      defaultZone: http://localhost:9001/eureka
