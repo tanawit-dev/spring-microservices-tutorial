@@ -1,4 +1,2 @@
 spring:  application:    name: department-service
-  sleuth:    sampler:      probability: 1.0
-      
-eureka:  client:    service-url:      defaultZone: http://localhost:9001/eureka
+  sleuth:    sampler:      probability: 1.0  data:    mongodb:      database: department_collection

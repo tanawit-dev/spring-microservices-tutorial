@@ -1,0 +1,73 @@
+version: "3.7"
+
+services:
+  mongo_db:
+    container_name: ${MONGO_NAME}
+    image: mongo
+    # environment:
+    #   MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+    #   MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+  zipkin:
+    container_name: ${ZIPKIN_NAME}
+    image: openzipkin/zipkin
+    ports:
+      - ${ZIPKIN_PORT}:${ZIPKIN_PORT}
+  discovery_server:
+    container_name: ${DISCOVERY_SERVICE_NAME}
+    image: tanawit17/discovery-server
+    ports:
+      - ${DISCOVERY_SERVICE_PORT}:${DEFAULT_SERVICE_PORT}
+    depends_on:
+      - mongo_db
+      - zipkin
+    environment:
+      eureka.client.service-url.defaultZone: ${DISCOVERY_SERVICE_EUREKA_INTERNAL_URL}
+  config_server:
+    container_name: ${CONFIG_SERVICE_NAME}
+    image: tanawit17/config-server
+    depends_on:
+      - discovery_server
+    environment:
+     eureka.client.service-url.defaultZone: ${DISCOVERY_SERVICE_EUREKA_URL}
+  api_gateway:
+    container_name: ${API_GATEWAT_NAME}
+    image: tanawit17/api-gateway
+    ports:
+      - ${API_GATEWAT_PORT}:${DEFAULT_SERVICE_PORT}
+    depends_on:
+      - discovery_server
+    environment:
+      eureka.client.service-url.defaultZone: ${DISCOVERY_SERVICE_EUREKA_URL}
+  employee_service:
+    container_name: ${EMPLOYEE_SERVICE_NAME}
+    image: tanawit17/employee-service
+    depends_on:
+      - api_gateway
+    environment:
+      eureka.client.service-url.defaultZone: ${DISCOVERY_SERVICE_EUREKA_URL}
+      spring.data.mongodb.host: ${MONGO_NAME}
+      spring.zipkin.base-url: ${ZIPKIN_BASE_URL}
+      # spring.data.mongodb.username: ${MONGO_INITDB_ROOT_USERNAME}
+      # spring.data.mongodb.password: ${MONGO_INITDB_ROOT_PASSWORD}
+  department_service:
+    container_name: ${DEPARTMENT_SERVICE_NAME}
+    image: tanawit17/department-service
+    depends_on:
+      - api_gateway
+    environment:
+     eureka.client.service-url.defaultZone: ${DISCOVERY_SERVICE_EUREKA_URL}
+     spring.data.mongodb.host: ${MONGO_NAME}
+     spring.zipkin.base-url: ${ZIPKIN_BASE_URL}
+    #  spring.data.mongodb.username: ${MONGO_INITDB_ROOT_USERNAME}
+    #  spring.data.mongodb.password: ${MONGO_INITDB_ROOT_PASSWORD}
+  organization_service:
+    container_name: ${ORGANIZATION_SERVICE_NAME}
+    image: tanawit17/organization-service
+    depends_on:
+      - api_gateway
+    environment:
+     eureka.client.service-url.defaultZone: ${DISCOVERY_SERVICE_EUREKA_URL}
+     spring.data.mongodb.host: ${MONGO_NAME}
+     spring.zipkin.base-url: ${ZIPKIN_BASE_URL}
+    #  spring.data.mongodb.username: ${MONGO_INITDB_ROOT_USERNAME}
+    #  spring.data.mongodb.password: ${MONGO_INITDB_ROOT_PASSWORD}

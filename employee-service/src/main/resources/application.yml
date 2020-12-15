@@ -1,7 +1,5 @@
-spring:  application:    name: employee-service
+server:  port: 8081spring:  application:    name: employee-service
   cloud:    config:      override-system-properties: false
       allow-override: true
       override-none: true
-  sleuth:    sampler:      probability: 1.0
-      
-eureka:  client:    service-url:      defaultZone: http://localhost:9001/eureka
+  sleuth:    sampler:      probability: 1.0  data:    mongodb:      database: employee_collection        zipkin:    base-url: 
